@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -57,3 +58,6 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+=======
+# insurance_api  ## Project Description This is a REST API built with Laravel for managing Cars and Owners with full CRUD operations. ## Endpoints ### Owners - GET /api/owners - GET /api/owners/{id} - POST /api/owners - PUT /api/owners/{id} - DELETE /api/owners/{id} ### Cars - GET /api/cars - GET /api/cars/{id} - POST /api/cars - PUT /api/cars/{id} - DELETE /api/cars/{id} ## Testing API tested using: - Postman - Curl ## Example POST Owner { "name": "Ali", "surname": "Veli" } ## Example POST Car { "reg_number": "34ABC123", "brand": "BMW", "model": "X5", "owner_id": 1 }
+>>>>>>> f9c9930d18c00fcf450ac2c4c7425952366c3a43
