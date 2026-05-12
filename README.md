@@ -1,2 +1,1 @@
-# insurance_api
-Laravel REST API for managing car owners and cars
+# insurance_api  ## Project Description This is a REST API built with Laravel for managing Cars and Owners with full CRUD operations. ## Endpoints ### Owners - GET /api/owners - GET /api/owners/{id} - POST /api/owners - PUT /api/owners/{id} - DELETE /api/owners/{id} ### Cars - GET /api/cars - GET /api/cars/{id} - POST /api/cars - PUT /api/cars/{id} - DELETE /api/cars/{id} ## Testing API tested using: - Postman - Curl ## Example POST Owner { "name": "Ali", "surname": "Veli" } ## Example POST Car { "reg_number": "34ABC123", "brand": "BMW", "model": "X5", "owner_id": 1 }
