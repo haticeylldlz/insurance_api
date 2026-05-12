@@ -28,11 +28,3 @@ API tested using:
 
 - Postman
 - cURL
-
-## Example POST Owner
-
-```json
-{
-  "name": "Ali",
-  "surname": "Veli"
-}
