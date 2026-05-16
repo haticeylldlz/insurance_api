@@ -21,7 +21,18 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'type',
     ];
+
+    public function owners()
+    {
+        return $this->hasMany(Owner::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->type === 'admin';
+    }
 
     /**
      * The attributes that should be hidden for serialization.

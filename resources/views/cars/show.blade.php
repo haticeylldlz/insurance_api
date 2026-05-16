@@ -26,18 +26,17 @@
         </div>
     @endif
 
-    {{-- SADECE ADMIN --}}
-    @if(auth()->user() && auth()->user()->role === 'admin')
-
+    @can('update', $car)
         <a href="{{ route('cars.edit', $car) }}" class="btn btn-warning mt-2">{{ __('Edit Car') }}</a>
+    @endcan
 
+    @can('delete', $car)
         <form action="{{ route('cars.destroy', $car) }}" method="POST" style="display:inline;">
             @csrf
             @method('DELETE')
             <button class="btn btn-danger mt-2">{{ __('Delete Car') }}</button>
         </form>
-
-    @endif
+    @endcan
 
     <br>
     <a href="{{ route('cars.index') }}" class="btn btn-primary mt-3">{{ __('Back to Cars') }}</a>

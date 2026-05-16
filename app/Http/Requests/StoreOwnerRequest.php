@@ -11,7 +11,7 @@ class StoreOwnerRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('create', \App\Models\Owner::class);
     }
 
     protected function prepareForValidation(): void

@@ -10,15 +10,24 @@ use Illuminate\Support\Facades\Storage;
 
 class CarController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Car::class, 'car');
+    }
+
     public function index()
     {
-        $cars = Car::with('owner')->get();
+        $cars = auth()->user()->isAdmin()
+            ? Car::with('owner')->get()
+            : Car::with('owner')->whereHas('owner', fn ($query) => $query->where('user_id', auth()->id()))->get();
+
         return view('cars.index', compact('cars'));
     }
 
     public function create()
     {
-        $owners = Owner::all();
+        $owners = $this->accessibleOwners();
+
         return view('cars.create', compact('owners'));
     }
 
@@ -26,14 +35,12 @@ class CarController extends Controller
     {
         $car = Car::create($request->validated());
 
-        // 🔥 FOTO UPLOAD
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
-
                 $path = $file->store('cars', 'public');
 
                 $car->photos()->create([
-                    'path' => $path
+                    'path' => $path,
                 ]);
             }
         }
@@ -44,7 +51,8 @@ class CarController extends Controller
     public function edit(Car $car)
     {
         $car->load('photos');
-        $owners = Owner::all();
+        $owners = $this->accessibleOwners();
+
         return view('cars.edit', compact('car', 'owners'));
     }
 
@@ -62,14 +70,12 @@ class CarController extends Controller
             }
         }
 
-        // 🔥 YENİ FOTO EKLEME (editte)
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
-
                 $path = $file->store('cars', 'public');
 
                 $car->photos()->create([
-                    'path' => $path
+                    'path' => $path,
                 ]);
             }
         }
@@ -84,12 +90,21 @@ class CarController extends Controller
         }
 
         $car->delete();
+
         return redirect()->route('cars.index');
     }
 
     public function show(Car $car)
     {
         $car->load(['owner', 'photos']);
+
         return view('cars.show', compact('car'));
+    }
+
+    private function accessibleOwners()
+    {
+        return auth()->user()->isAdmin()
+            ? Owner::orderBy('name')->get()
+            : auth()->user()->owners()->orderBy('name')->get();
     }
 }

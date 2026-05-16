@@ -4,16 +4,17 @@
 <div class="container">
     <h2>{{ $owner->name }} {{ $owner->surname }}</h2>
 
-    {{-- SADECE ADMIN --}}
-    @if(auth()->user() && auth()->user()->role === 'admin')
+    @can('update', $owner)
         <a href="{{ route('owners.edit', $owner) }}" class="btn btn-warning mb-2">{{ __('Edit Owner') }}</a>
+    @endcan
 
+    @can('delete', $owner)
         <form action="{{ route('owners.destroy', $owner) }}" method="POST" style="display:inline;">
             @csrf
             @method('DELETE')
             <button class="btn btn-danger mb-2">{{ __('Delete Owner') }}</button>
         </form>
-    @endif
+    @endcan
 
     <h3>{{ __('Cars') }}</h3>
 
@@ -25,11 +26,7 @@
                     <th>{{ __('Registration Number') }}</th>
                     <th>{{ __('Brand') }}</th>
                     <th>{{ __('Model') }}</th>
-
-                    {{-- ADMIN için action kolonu --}}
-                    @if(auth()->user() && auth()->user()->role === 'admin')
-                        <th>{{ __('Actions') }}</th>
-                    @endif
+                    <th>{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,20 +35,21 @@
                     <td>{{ $car->reg_number }}</td>
                     <td>{{ $car->brand }}</td>
                     <td>{{ $car->model }}</td>
-
-                    {{-- SADECE ADMIN --}}
-                    @if(auth()->user() && auth()->user()->role === 'admin')
                     <td>
-                        <a href="{{ route('cars.edit', $car) }}" class="btn btn-warning btn-sm">{{ __('Edit') }}</a>
+                        <a href="{{ route('cars.show', $car) }}" class="btn btn-info btn-sm">{{ __('View') }}</a>
 
-                        <form action="{{ route('cars.destroy', $car) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm">{{ __('Delete') }}</button>
-                        </form>
+                        @can('update', $car)
+                            <a href="{{ route('cars.edit', $car) }}" class="btn btn-warning btn-sm">{{ __('Edit') }}</a>
+                        @endcan
+
+                        @can('delete', $car)
+                            <form action="{{ route('cars.destroy', $car) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm">{{ __('Delete') }}</button>
+                            </form>
+                        @endcan
                     </td>
-                    @endif
-
                 </tr>
                 @endforeach
             </tbody>
@@ -60,6 +58,10 @@
     @else
         <p>{{ __('No cars for this owner yet.') }}</p>
     @endif
+
+    @can('create', App\Models\Car::class)
+        <a href="{{ route('cars.create', ['owner_id' => $owner->id]) }}" class="btn btn-success mt-2">{{ __('Add Car') }}</a>
+    @endcan
 
     <a href="{{ route('owners.index') }}" class="btn btn-primary mt-3">{{ __('Back to Owners') }}</a>
 </div>

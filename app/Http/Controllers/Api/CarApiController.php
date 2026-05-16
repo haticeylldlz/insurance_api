@@ -3,92 +3,92 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Car;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CarApiController extends Controller
 {
-    // GET all cars
     public function index()
     {
         $cars = Car::with('owner')->get();
 
         return response()->json([
             'status' => true,
-            'data' => $cars
+            'data' => $cars,
         ]);
     }
 
-    // GET single car
     public function show($id)
     {
         $car = Car::with('owner')->find($id);
 
-        if (!$car) {
+        if (! $car) {
             return response()->json([
                 'status' => false,
-                'message' => 'Car not found'
+                'message' => 'Car not found',
             ], 404);
         }
 
         return response()->json([
             'status' => true,
-            'data' => $car
+            'data' => $car,
         ]);
     }
 
-    // CREATE car
     public function store(Request $request)
     {
-        $car = Car::create([
-            'reg_number' => $request->reg_number,
-            'brand' => $request->brand,
-            'model' => $request->model,
-            'owner_id' => $request->owner_id
+        $validated = $request->validate([
+            'reg_number' => ['required', 'string', 'max:32', Rule::unique('cars', 'reg_number')],
+            'brand' => ['required', 'string', 'max:100'],
+            'model' => ['required', 'string', 'max:100'],
+            'owner_id' => ['required', 'integer', 'exists:owners,id'],
         ]);
+
+        $car = Car::create($validated);
 
         return response()->json([
             'status' => true,
             'message' => 'Car created',
-            'data' => $car
-        ]);
+            'data' => $car->load('owner'),
+        ], 201);
     }
 
-    // UPDATE car
     public function update(Request $request, $id)
     {
         $car = Car::find($id);
 
-        if (!$car) {
+        if (! $car) {
             return response()->json([
                 'status' => false,
-                'message' => 'Car not found'
+                'message' => 'Car not found',
             ], 404);
         }
 
-        $car->update([
-            'reg_number' => $request->reg_number,
-            'brand' => $request->brand,
-            'model' => $request->model,
-            'owner_id' => $request->owner_id
+        $validated = $request->validate([
+            'reg_number' => ['required', 'string', 'max:32', Rule::unique('cars', 'reg_number')->ignore($car->id)],
+            'brand' => ['required', 'string', 'max:100'],
+            'model' => ['required', 'string', 'max:100'],
+            'owner_id' => ['required', 'integer', 'exists:owners,id'],
         ]);
+
+        $car->update($validated);
 
         return response()->json([
             'status' => true,
             'message' => 'Car updated',
-            'data' => $car
+            'data' => $car->fresh()->load('owner'),
         ]);
     }
 
-    // DELETE car
     public function destroy($id)
     {
         $car = Car::find($id);
 
-        if (!$car) {
+        if (! $car) {
             return response()->json([
                 'status' => false,
-                'message' => 'Car not found'
+                'message' => 'Car not found',
             ], 404);
         }
 
@@ -96,7 +96,7 @@ class CarApiController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Car deleted'
+            'message' => 'Car deleted',
         ]);
     }
 }

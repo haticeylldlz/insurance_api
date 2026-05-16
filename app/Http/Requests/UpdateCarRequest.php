@@ -10,7 +10,7 @@ class UpdateCarRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('update', $this->route('car'));
     }
 
     protected function prepareForValidation(): void
@@ -45,7 +45,15 @@ class UpdateCarRequest extends FormRequest
             ],
             'brand' => ['required', 'string', 'min:2', 'max:100'],
             'model' => ['required', 'string', 'min:1', 'max:100'],
-            'owner_id' => ['required', 'integer', 'exists:owners,id'],
+            'owner_id' => [
+                'required',
+                'integer',
+                Rule::exists('owners', 'id')->where(function ($query) {
+                    if (! $this->user()->isAdmin()) {
+                        $query->where('user_id', $this->user()->id);
+                    }
+                }),
+            ],
             'photos' => ['nullable', 'array', 'max:10'],
             'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'delete_photo_ids' => ['nullable', 'array'],

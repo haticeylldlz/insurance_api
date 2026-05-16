@@ -29,19 +29,7 @@ Route::get('/', function () {
     return redirect()->route('owners.index');
 });
 
-// Auth gerekli
 Route::middleware('auth')->group(function () {
-
-    // SADECE ADMIN
-    Route::middleware('admin')->group(function () {
-
-        Route::resource('owners', OwnerController::class)->except(['index', 'show']);
-        Route::resource('cars', CarController::class)->except(['index', 'show']);
-
-    });
-
-    // Herkes görebilir (index & show)
-    Route::resource('owners', OwnerController::class)->only(['index', 'show']);
-    Route::resource('cars', CarController::class)->only(['index', 'show']);
-
+    Route::resource('owners', OwnerController::class);
+    Route::resource('cars', CarController::class);
 });

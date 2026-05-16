@@ -3,86 +3,85 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Owner;
+use Illuminate\Http\Request;
 
 class OwnerApiController extends Controller
 {
-    // GET ALL
     public function index()
     {
         return response()->json([
             'status' => true,
-            'data' => Owner::all()
+            'data' => Owner::all(),
         ]);
     }
 
-    // GET ONE
     public function show($id)
     {
         $owner = Owner::find($id);
 
-        if (!$owner) {
+        if (! $owner) {
             return response()->json([
                 'status' => false,
-                'message' => 'Owner not found'
+                'message' => 'Owner not found',
             ], 404);
         }
 
         return response()->json([
             'status' => true,
-            'data' => $owner
+            'data' => $owner,
         ]);
     }
 
-    // CREATE
     public function store(Request $request)
     {
-        $owner = Owner::create([
-            'name' => $request->name,
-            'surname' => $request->surname
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:30'],
+            'surname' => ['required', 'string', 'min:2', 'max:30'],
         ]);
+
+        $owner = Owner::create($validated);
 
         return response()->json([
             'status' => true,
             'message' => 'Owner created',
-            'data' => $owner
-        ]);
+            'data' => $owner,
+        ], 201);
     }
 
-    // UPDATE
     public function update(Request $request, $id)
     {
         $owner = Owner::find($id);
 
-        if (!$owner) {
+        if (! $owner) {
             return response()->json([
                 'status' => false,
-                'message' => 'Owner not found'
+                'message' => 'Owner not found',
             ], 404);
         }
 
-        $owner->update([
-            'name' => $request->name,
-            'surname' => $request->surname
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:30'],
+            'surname' => ['required', 'string', 'min:2', 'max:30'],
         ]);
+
+        $owner->update($validated);
 
         return response()->json([
             'status' => true,
             'message' => 'Owner updated',
-            'data' => $owner
+            'data' => $owner->fresh(),
         ]);
     }
 
-    // DELETE
     public function destroy($id)
     {
         $owner = Owner::find($id);
 
-        if (!$owner) {
+        if (! $owner) {
             return response()->json([
                 'status' => false,
-                'message' => 'Owner not found'
+                'message' => 'Owner not found',
             ], 404);
         }
 
@@ -90,7 +89,7 @@ class OwnerApiController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Owner deleted'
+            'message' => 'Owner deleted',
         ]);
     }
 }

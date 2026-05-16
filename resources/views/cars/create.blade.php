@@ -60,7 +60,7 @@
             <select name="owner_id" id="owner_id" class="form-select @error('owner_id') is-invalid @enderror">
                 <option value="">{{ __('Select Owner') }}</option>
                 @foreach($owners as $owner)
-                    <option value="{{ $owner->id }}" @selected(old('owner_id') == $owner->id)>
+                    <option value="{{ $owner->id }}" @selected(old('owner_id', request('owner_id')) == $owner->id)>
                         {{ $owner->name }} {{ $owner->surname }}
                     </option>
                 @endforeach

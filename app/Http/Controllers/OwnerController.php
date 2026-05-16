@@ -8,57 +8,50 @@ use App\Models\Owner;
 
 class OwnerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct()
     {
-        $owners = Owner::all();
-       return view('owners.index', compact('owners'));
+        $this->authorizeResource(Owner::class, 'owner');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function index()
+    {
+        $owners = auth()->user()->isAdmin()
+            ? Owner::with('user')->get()
+            : auth()->user()->owners;
+
+        return view('owners.index', compact('owners'));
+    }
+
     public function create()
     {
         return view('owners.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreOwnerRequest $request)
     {
-        Owner::create($request->validated());
+        $data = $request->validated();
+
+        if (! auth()->user()->isAdmin()) {
+            $data['user_id'] = auth()->id();
+        }
+
+        Owner::create($data);
 
         return redirect()->route('owners.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Owner $owner)
     {
-        // Bu Owner'ın sahip olduğu arabaları alıyoruz
-           $cars = $owner->cars;
+        $cars = $owner->cars;
 
-           // owners/show.blade.php sayfasına gönderiyoruz
-           return view('owners.show', compact('owner', 'cars'));
-       }
-    
+        return view('owners.show', compact('owner', 'cars'));
+    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Owner $owner)
     {
         return view('owners.edit', compact('owner'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateOwnerRequest $request, Owner $owner)
     {
         $owner->update($request->validated());
@@ -66,12 +59,10 @@ class OwnerController extends Controller
         return redirect()->route('owners.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Owner $owner)
     {
         $owner->delete();
+
         return redirect()->route('owners.index');
     }
 }

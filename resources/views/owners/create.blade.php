@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>{{ __('Add Car') }}</h2>
+    <h2>{{ __('Add Owner') }}</h2>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -14,75 +14,30 @@
         </div>
     @endif
 
-    <form action="{{ route('cars.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+    <form action="{{ route('owners.store') }}" method="POST" novalidate>
         @csrf
 
-        {{-- Registration Number --}}
         <div class="mb-3">
-            <label for="reg_number" class="form-label">{{ __('Registration Number') }}</label>
-            <input type="text" name="reg_number" id="reg_number" value="{{ old('reg_number') }}"
-                   class="form-control @error('reg_number') is-invalid @enderror"
-                   placeholder="{{ __('Registration Number') }}" autocomplete="off" maxlength="32">
-            @error('reg_number')
+            <label for="name" class="form-label">{{ __('Name') }}</label>
+            <input type="text" name="name" id="name" value="{{ old('name') }}"
+                   class="form-control @error('name') is-invalid @enderror"
+                   placeholder="{{ __('Name') }}" autocomplete="given-name" maxlength="30">
+            @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
-        {{-- Brand --}}
         <div class="mb-3">
-            <label for="brand" class="form-label">{{ __('Brand') }}</label>
-            <input type="text" name="brand" id="brand" value="{{ old('brand') }}"
-                   class="form-control @error('brand') is-invalid @enderror"
-                   placeholder="{{ __('Brand') }}" autocomplete="off">
-            @error('brand')
+            <label for="surname" class="form-label">{{ __('Surname') }}</label>
+            <input type="text" name="surname" id="surname" value="{{ old('surname') }}"
+                   class="form-control @error('surname') is-invalid @enderror"
+                   placeholder="{{ __('Surname') }}" autocomplete="family-name" maxlength="30">
+            @error('surname')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
-        {{-- Model --}}
-        <div class="mb-3">
-            <label for="model" class="form-label">{{ __('Model') }}</label>
-            <input type="text" name="model" id="model" value="{{ old('model') }}"
-                   class="form-control @error('model') is-invalid @enderror"
-                   placeholder="{{ __('Model') }}" autocomplete="off">
-            @error('model')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        {{-- Photos --}}
-        <div class="mb-3">
-            <label class="form-label">{{ __('Car Photos') }}</label>
-            <input type="file" name="photos[]" multiple
-                   class="form-control @error('photos.*') is-invalid @enderror">
-
-            @error('photos.*')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        {{-- Owner --}}
-        <div class="mb-3">
-            <label for="owner_id" class="form-label">{{ __('Owner') }}</label>
-            <select name="owner_id" id="owner_id"
-                    class="form-select @error('owner_id') is-invalid @enderror">
-                <option value="">{{ __('Select Owner') }}</option>
-
-                @foreach($owners as $owner)
-                    <option value="{{ $owner->id }}" @selected(old('owner_id') == $owner->id)>
-                        {{ $owner->name }} {{ $owner->surname }}
-                    </option>
-                @endforeach
-            </select>
-
-            @error('owner_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <button type="submit" class="btn btn-success">
-            {{ __('Save') }}
-        </button>
+        <button type="submit" class="btn btn-success">{{ __('Save') }}</button>
     </form>
 </div>
 @endsection

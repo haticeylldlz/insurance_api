@@ -4,10 +4,9 @@
 <div class="container">
     <h2>{{ __('Cars') }}</h2>
 
-    {{-- SADECE ADMIN --}}
-    @if(auth()->user() && auth()->user()->role === 'admin')
+    @can('create', App\Models\Car::class)
         <a href="{{ route('cars.create') }}" class="btn btn-success mb-3">{{ __('Add Car') }}</a>
-    @endif
+    @endcan
 
     @if($cars->count() > 0)
     <div class="table-responsive">
@@ -31,22 +30,19 @@
                     <td>{{ $car->model }}</td>
                     <td>{{ $car->owner->name ?? '' }} {{ $car->owner->surname ?? '' }}</td>
                     <td>
-
                         <a href="{{ route('cars.show', $car) }}" class="btn btn-info btn-sm">{{ __('View') }}</a>
 
-                        {{-- SADECE ADMIN --}}
-                        @if(auth()->user() && auth()->user()->role === 'admin')
-
+                        @can('update', $car)
                             <a href="{{ route('cars.edit', $car) }}" class="btn btn-warning btn-sm">{{ __('Edit') }}</a>
+                        @endcan
 
+                        @can('delete', $car)
                             <form action="{{ route('cars.destroy', $car) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-danger btn-sm">{{ __('Delete') }}</button>
                             </form>
-
-                        @endif
-
+                        @endcan
                     </td>
                 </tr>
                 @endforeach
